@@ -5,6 +5,7 @@ services:
     tty: true
     container_name: nodejs_morpion
     build:
+      context: .
       dockerfile: Dockerfile
     volumes:
       - .:/usr/app/
