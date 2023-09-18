@@ -1,6 +1,3 @@
 module.exports = {
-  extends: [
-    'semistandard',
-    "prettier"
-  ]
+  extends: ["semistandard", "prettier"],
 };
