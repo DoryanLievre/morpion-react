@@ -1,1 +1,1 @@
-describe("toto", () => {});
+describe('toto', () => {})
