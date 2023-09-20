@@ -4,11 +4,11 @@
     "format:fix": "prettier ./src --write",
     "test": "jest"
   },
-  "jest": {
-    "verbose": true
-  },
   "devDependencies": {
+    "@babel/preset-typescript": "^7.22.15",
     "@types/jest": "^29.5.5",
+    "@typescript-eslint/eslint-plugin": "^6.7.2",
+    "@typescript-eslint/parser": "^6.7.2",
     "eslint": "^8.49.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-config-semistandard": "^17.0.0",
