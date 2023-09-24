@@ -9,13 +9,19 @@ class Morpion {
     }
 
     positionner(positionLigne: number, positionColonne: number) {
-        if (this.estEnDehorsDuPlateauDeJeu(positionColonne)) throw new PositionInvalide("toto")
+        if (this.sontEnDehorsDuPlateauDeJeu(positionColonne, positionLigne)) throw new PositionInvalide(
+            `La position (${positionLigne},${positionColonne}) est invalide`,
+        )
 
         this.plateauDeJeu[positionLigne][positionColonne] = 1
     }
 
+    private sontEnDehorsDuPlateauDeJeu(positionColonne: number, positionLigne: number) {
+        return this.estEnDehorsDuPlateauDeJeu(positionColonne) || this.estEnDehorsDuPlateauDeJeu(positionLigne);
+    }
+
     private estEnDehorsDuPlateauDeJeu(position: number) {
-        return position > 2
+        return position > 2 || position < 0
     }
 }
 
@@ -25,6 +31,7 @@ class PositionInvalide extends Error {
     }
 }
 
+// TODO: quand je place un symbole sur une position déjà prise, alors une exception PositionInvalide est levée
 describe('Jeu du morpion', () => {
     it("quand j'instancie la classe Morpion, alors son plateau de jeu est créé.", () => {
         // Given
@@ -74,21 +81,47 @@ describe('Jeu du morpion', () => {
         },
     )
 
-    it('quand je place un symbole en dehors du plateau de jeu, alors on leve une exception "PositionInvalide".', () => {
+    it.each([
+        {
+            positionLigne: 1,
+            positionColonne: 3
+        },
+        {
+            positionLigne: 1,
+            positionColonne: -1
+        },
+        {
+            positionLigne: 3,
+            positionColonne: 1
+        },
+        {
+            positionLigne: -1,
+            positionColonne: 1
+        },
+        ])(
+            'quand je place un symbole en dehors du plateau de jeu ($positionLigne,$positionColonne), alors on lève une exception "PositionInvalide".', ({positionLigne,positionColonne}) => {
         // Given
-        const erreurAttendue = new PositionInvalide("toto") // TODO: changer le message et reprendre à partir d'ici
+        const erreurAttendue = new PositionInvalide(`La position (${positionLigne},${positionColonne}) est invalide`)
         const morpion = new Morpion()
 
+        const action = () => morpion.positionner(positionLigne, positionColonne)
+
         // When
-        try {
-            morpion.positionner(1, 3)
-        }
-        catch (error) {
-            // Then
-            expect(error).toBeInstanceOf(PositionInvalide)
-            expect(error).toStrictEqual(erreurAttendue)
-        }
+        const exception = récupérerLException(action)
 
-
+        // Then
+        expect(exception.name).toBe(erreurAttendue.name)
+        expect(exception.message).toStrictEqual(erreurAttendue.message)
     })
 })
+
+
+const récupérerLException = (action: ()=> void) => {
+    try {
+        action()
+    }
+    catch (error) {
+        return error
+    }
+    throw new Error('Aucune exception levée.')
+}
